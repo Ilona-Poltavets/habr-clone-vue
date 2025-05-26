@@ -1,3 +1,4 @@
+@use './mixins' as *;
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
 #app {
@@ -32,16 +33,18 @@
         height: 100%;
         width: calc(100% - 40px);
         padding: 20px;
+        animation: moveLeftToRigtFadeIn 2s ease forwards;
 
         h1 {
-            font-size: 60px;
+            // font-size: calc(10vh + 1px);
             font-weight: 900;
             text-align: center;
             margin-top: 20px;
+            @include fluid(font-size, 16, 100);
         }
 
         p {
-            font-size: 20px;
+            // font-size: 20px;
             // text-align: center;
             margin-top: 20px;
             font-family: "Source Code Pro", monospace;
@@ -50,6 +53,7 @@
             white-space: nowrap;
             width: fit-content;
             animation: typing 3s steps(51, end), blink 0.75s step-end infinite;
+            @include fluid(font-size, 16, 20);
         }
 
         &::after {
@@ -83,7 +87,8 @@
             left: 50%;
             translate: -50% 0;
             font-weight: 900;
-            font-size: 50px;
+            // font-size: 50px;
+            @include fluid(font-size, 20, 50);
         }
     }
 
@@ -93,8 +98,9 @@
         left: 50%;
         translate: -50% 100%;
         font-weight: 900;
-        font-size: 300px;
+        // font-size: 300px;
         animation: errorAnimation 2s ease forwards;
+        @include fluid(font-size, 100, 300);
     }
 
 
@@ -102,7 +108,7 @@
 
 @keyframes catAnimation {
     0% {
-        translate: 0 50%;
+        translate: 0 80%;
     }
 
     100% {
@@ -135,5 +141,17 @@
 
     50% {
         border-color: white
+    }
+}
+
+@keyframes moveLeftToRigtFadeIn {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
