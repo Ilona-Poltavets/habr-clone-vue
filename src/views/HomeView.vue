@@ -3,7 +3,5 @@ import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <main class="bg-gray-100 dark:bg-gray-900"></main>
 </template>
