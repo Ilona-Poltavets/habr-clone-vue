@@ -1,0 +1,21 @@
+$screen-xs: 480px;
+$screen-xxl-max: 1200px;
+
+@mixin variable-size($property, $min, $max) {
+
+    @media (max-width: 479px) {
+
+        #{$property} : #{rem($max)};
+    }
+
+    @media (min-width: $screen-xs) and (max-width: $screen-xxl-max) {
+
+        #{$property}: calc(#{rem($max)} + (#{rem_2($min)} - #{rem_2($max)}) * ((100vw - 30rem) / (120 - 30)));
+    }
+
+    @media (min-width: 1921px) {
+
+        #{$property} : #{rem($min)};
+
+    }
+}
