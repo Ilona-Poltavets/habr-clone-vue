@@ -99,17 +99,12 @@ onMounted(async () => {
           программирование, фреймворки, инструменты и инженерные практики.
         </p>
       </div>
-
-      <div class="language-switch" aria-label="Language switcher">
-        <button type="button" class="active">Русский</button>
-        <button type="button">English</button>
-      </div>
     </section>
 
     <p v-if="apiError" class="api-status">{{ apiError }}</p>
 
     <section class="editorial-grid" aria-label="News sections">
-      <article class="news-column">
+      <article class="news-column news-column--games">
         <div class="column-head">
           <span class="section-tag">Gaming desk</span>
           <h2>Новости игр</h2>
@@ -130,7 +125,7 @@ onMounted(async () => {
         </ul>
       </article>
 
-      <article class="news-column">
+      <article class="news-column news-column--code">
         <div class="column-head">
           <span class="section-tag">Dev desk</span>
           <h2>Программирование</h2>

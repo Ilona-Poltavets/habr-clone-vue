@@ -18,6 +18,11 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
+      path: '/sections/:sectionSlug',
+      name: 'section',
+      component: () => import('../views/SectionView.vue'),
+    },
+    {
       path: '/404',
       name: '404',
       component: () => import('../views/NotFoundView.vue'),
