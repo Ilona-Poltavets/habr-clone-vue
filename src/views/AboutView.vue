@@ -1,15 +1,9 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <main class="about-page">
+    <h1>О проекте</h1>
+    <p>
+      HalfStack — двуязычный блог для программистов и геймеров. Редакция
+      разделена на две равные части: новости игр и новости программирования.
+    </p>
+  </main>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>

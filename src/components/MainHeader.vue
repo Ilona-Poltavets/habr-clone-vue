@@ -1,27 +1,33 @@
 <script setup lang="ts">
 import ThemeToggle from './ThemeToggle.vue'
+
+defineProps<{
+  isDarkTheme: boolean
+}>()
+
+const emit = defineEmits<{
+  toggle: []
+}>()
 </script>
 
 <template>
-  <header class="flex items-center justify-between p-7 bg-gray-200 dark:bg-gray-950">
-    <nav class="w-full">
-      <ul class="flex items-center">
+  <header class="site-header">
+    <RouterLink to="/" class="brand">
+      <span class="brand-mark">H</span>
+      <span>HalfStack</span>
+    </RouterLink>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
         <li>
-          <RouterLink
-            to="/"
-            class="text-gray-950 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white"
-            >Home</RouterLink
-          >
+          <RouterLink to="/">Новости</RouterLink>
         </li>
         <li>
-          <RouterLink
-            to="/about"
-            class="text-gray-950 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white"
-            >About</RouterLink
-          >
+          <RouterLink to="/about">О проекте</RouterLink>
         </li>
       </ul>
     </nav>
-    <ThemeToggle :isDarkTheme="isDarkTheme" @toggle="toggleTheme" />
+
+    <ThemeToggle :isDarkTheme="isDarkTheme" @toggle="emit('toggle')" />
   </header>
 </template>
