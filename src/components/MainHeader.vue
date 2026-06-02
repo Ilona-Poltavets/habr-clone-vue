@@ -41,6 +41,7 @@ const emit = defineEmits<{
         <button type="button">EN</button>
       </div>
       <ThemeToggle :isDarkTheme="isDarkTheme" @toggle="emit('toggle')" />
+      <RouterLink class="login-link" to="/login">Войти</RouterLink>
     </div>
   </header>
 </template>

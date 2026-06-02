@@ -1,104 +1,174 @@
 <script setup lang="ts">
-function handleFocus() {
-  const monkey = document.getElementById('funny-monkey')
-  if (monkey) {
-    monkey.classList.add('close-face')
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { loginUser, registerUser, type AuthResponse } from '@/services/api'
+
+const router = useRouter()
+const mode = ref<'login' | 'register'>('login')
+const isLoading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
+
+const loginForm = ref({
+  email: 'admin@halfstack.dev',
+  password: 'admin12345',
+})
+
+const registerForm = ref({
+  username: '',
+  email: '',
+  password: '',
+})
+
+const title = computed(() => (mode.value === 'login' ? 'Вход' : 'Регистрация'))
+const subtitle = computed(() =>
+  mode.value === 'login'
+    ? 'Войди как пользователь, автор, модератор или администратор.'
+    : 'Создай аккаунт. Новые аккаунты получают роль Пользователь.',
+)
+
+const saveAuth = (auth: AuthResponse) => {
+  localStorage.setItem('auth_token', auth.token)
+  localStorage.setItem('auth_user', JSON.stringify(auth.user))
+}
+
+const submitLogin = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  try {
+    const auth = await loginUser(loginForm.value)
+    saveAuth(auth)
+    successMessage.value = `Вы вошли как ${auth.user.role_title}.`
+
+    if (auth.user.role === 'admin') {
+      await router.push('/admin')
+    }
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Не удалось войти'
+  } finally {
+    isLoading.value = false
   }
 }
-function handleBlur() {
-  const monkey = document.getElementById('funny-monkey')
-  if (monkey) {
-    monkey.classList.remove('close-face')
+
+const submitRegister = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  try {
+    const auth = await registerUser(registerForm.value)
+    saveAuth(auth)
+    successMessage.value = `Аккаунт создан. Роль: ${auth.user.role_title}.`
+    await router.push('/')
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Не удалось создать аккаунт'
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
 
 <template>
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
-  />
-  <main class="bg-gray-100 dark:bg-gray-900 login-page">
-    <div class="section">
-      <div class="container">
-        <div class="row full-height justify-content-center">
-          <div class="col-12 text-center align-self-center py-5">
-            <div class="section pb-5 pt-5 pt-sm-2 text-center">
-              <h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6>
-              <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" />
-              <label for="reg-log"></label>
-              <div class="card-3d-wrap mx-auto">
-                <div class="card-3d-wrapper">
-                  <div class="card-front">
-                    <div class="center-wrap">
-                      <div class="section text-center">
-                        <h4 class="mb-4 pb-3">Log In</h4>
-                        <div class="form-group">
-                          <input type="email" class="form-style" placeholder="Email" />
-                          <i class="input-icon uil uil-at"></i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input
-                            type="password"
-                            class="form-style"
-                            placeholder="Password"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                          />
-                          <i class="input-icon uil uil-lock-alt"></i>
-                        </div>
-                        <a href="" class="btn mt-4">Login</a>
-                        <p class="mb-0 mt-4 text-center">
-                          <a href="" class="link">Forgot your password?</a>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card-back">
-                    <div class="center-wrap">
-                      <div class="section text-center">
-                        <h4 class="mb-3 pb-3">Sign Up</h4>
-                        <div class="form-group">
-                          <input type="text" class="form-style" placeholder="Full Name" />
-                          <i class="input-icon uil uil-user"></i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input type="tel" class="form-style" placeholder="Phone Number" />
-                          <i class="input-icon uil uil-phone"></i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input type="email" class="form-style" placeholder="Email" />
-                          <i class="input-icon uil uil-at"></i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input
-                            type="password"
-                            class="form-style"
-                            placeholder="Password"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                          />
-                          <i class="input-icon uil uil-lock-alt"></i>
-                        </div>
-                        <a href="" class="btn mt-4">Register</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <main class="auth-page">
+    <RouterLink class="auth-brand" to="/">
+      <span class="brand-mark">H</span>
+      <span>HalfStack</span>
+    </RouterLink>
+
+    <section class="auth-shell">
+      <div class="auth-copy">
+        <p class="eyebrow">Access Control</p>
+        <h1>Логин, регистрация и роли для редакции</h1>
+        <p>
+          Заготовка авторизации уже разделяет доступ для админа, редакции, авторов,
+          проверяющих, модераторов и обычных пользователей.
+        </p>
+
+        <div class="role-preview">
+          <span>Admin</span>
+          <span>Editor-in-Chief</span>
+          <span>Author</span>
+          <span>Reviewer</span>
+          <span>Moderator</span>
+          <span>User</span>
+          <span>Guest</span>
         </div>
       </div>
-    </div>
-    <div id="funny-monkey">
-      <div class="monkey-normal">
-        <img src="@/assets/img/Hear_No_Evil_Monkey_Emoji_grande.webp" alt="Funny Monkey" />
+
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button type="button" :class="{ active: mode === 'login' }" @click="mode = 'login'">
+            Вход
+          </button>
+          <button
+            type="button"
+            :class="{ active: mode === 'register' }"
+            @click="mode = 'register'"
+          >
+            Регистрация
+          </button>
+        </div>
+
+        <div class="auth-card__head">
+          <h2>{{ title }}</h2>
+          <p>{{ subtitle }}</p>
+        </div>
+
+        <form v-if="mode === 'login'" class="auth-form" @submit.prevent="submitLogin">
+          <label>
+            Email
+            <input v-model="loginForm.email" type="email" autocomplete="email" required />
+          </label>
+
+          <label>
+            Пароль
+            <input
+              v-model="loginForm.password"
+              type="password"
+              autocomplete="current-password"
+              required
+            />
+          </label>
+
+          <button class="auth-submit" type="submit" :disabled="isLoading">
+            {{ isLoading ? 'Входим...' : 'Войти' }}
+          </button>
+        </form>
+
+        <form v-else class="auth-form" @submit.prevent="submitRegister">
+          <label>
+            Имя
+            <input v-model="registerForm.username" type="text" autocomplete="name" required />
+          </label>
+
+          <label>
+            Email
+            <input v-model="registerForm.email" type="email" autocomplete="email" required />
+          </label>
+
+          <label>
+            Пароль
+            <input
+              v-model="registerForm.password"
+              type="password"
+              autocomplete="new-password"
+              minlength="8"
+              required
+            />
+          </label>
+
+          <button class="auth-submit" type="submit" :disabled="isLoading">
+            {{ isLoading ? 'Создаем...' : 'Создать аккаунт' }}
+          </button>
+        </form>
+
+        <p v-if="errorMessage" class="auth-message auth-message--error">{{ errorMessage }}</p>
+        <p v-if="successMessage" class="auth-message auth-message--success">{{ successMessage }}</p>
+
+        <p class="auth-hint">Тестовый админ: admin@halfstack.dev / admin12345</p>
       </div>
-      <div class="monkey-secret">
-        <img src="@/assets/img/See_No_Evil_Monkey_Emoji_large.webp" alt="Funny Monkey" />
-      </div>
-    </div>
+    </section>
   </main>
 </template>
